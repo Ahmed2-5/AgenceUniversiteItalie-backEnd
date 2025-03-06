@@ -4,5 +4,5 @@ public enum EnumRole {
     SUPER_ADMIN,
     ADMIN,
     CLIENT,
-    HEDI
+
 }
