@@ -1,0 +1,65 @@
+package Agence.AgenceUniversiteItalie_backEnd.service;
+
+
+import Agence.AgenceUniversiteItalie_backEnd.entity.PasswordResetToken;
+import Agence.AgenceUniversiteItalie_backEnd.entity.Utilisateur;
+import Agence.AgenceUniversiteItalie_backEnd.repository.PasswordResetTokenRepository;
+import Agence.AgenceUniversiteItalie_backEnd.repository.UtilisateurRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Service
+public class PasswordResetService {
+
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private PasswordResetTokenRepository tokenRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
+    public void sendResetPasswordEmail(String email){
+
+        Utilisateur utilisateur = utilisateurRepository.findByAdresseMail(email)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "utilisateur introvable !"));
+
+        String token = UUID.randomUUID().toString();
+
+        tokenRepository.findByUtilisateur(utilisateur).ifPresent(tokenRepository::delete);
+
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setUtilisateur(utilisateur);
+        resetToken.setExpiryDate(LocalDateTime.now().plusHours(1));
+
+        tokenRepository.save(resetToken);
+
+        String resetLink = "http://localhost:8082/api/password/reset?token" + token;
+        emailService.sendSimpleEmail(email, "Réintialisation du mot de passe",
+                "cliquer sur le lien pour le reset : " + resetLink);
+        System.out.println("Email de reset a été envoyer a : " +email);
+    }
+
+
+
+
+
+
+
+
+
+
+}
