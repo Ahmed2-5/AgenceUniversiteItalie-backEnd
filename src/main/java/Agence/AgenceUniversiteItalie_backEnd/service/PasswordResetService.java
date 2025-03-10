@@ -53,13 +53,27 @@ public class PasswordResetService {
         System.out.println("Email de reset a été envoyer a : " +email);
     }
 
+    public void resetPassword(String token , String newPassword, String confirmPassword){
+        if (!newPassword.equals(confirmPassword)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"les mots de passe ne sont pas kifkif ! ");
+        }
+
+        PasswordResetToken resetToken = tokenRepository.findByToken(token)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Token invalide ou expiré"));
+
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())){
+            tokenRepository.delete(resetToken);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "token expiré c'est confirmer mon ami")
+        }
 
 
+        Utilisateur utilisateur = resetToken.getUtilisateur();
+        utilisateur.setMotDePasse(passwordEncoder.encode(newPassword));
+        utilisateurRepository.save(utilisateur);
 
 
+        tokenRepository.delete(resetToken);
+        System.out.println("Mot de passes mis a jour pour : " +utilisateur.getAdresseMail());
 
-
-
-
-
+    }
 }
