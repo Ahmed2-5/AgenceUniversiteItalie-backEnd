@@ -63,7 +63,7 @@ public class PasswordResetService {
 
         if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())){
             tokenRepository.delete(resetToken);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "token expiré c'est confirmer mon ami")
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "token expiré c'est confirmer mon ami");
         }
 
 
