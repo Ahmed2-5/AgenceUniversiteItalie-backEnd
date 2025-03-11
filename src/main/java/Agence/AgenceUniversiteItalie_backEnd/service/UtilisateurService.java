@@ -10,9 +10,15 @@ import Agence.AgenceUniversiteItalie_backEnd.repository.UtilisateurRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UtilisateurService {
@@ -100,6 +106,87 @@ public class UtilisateurService {
     private boolean utilisateurExiste(String email) {
         return utilisateurRepository.findByAdresseMail(email).isPresent();
     }
+
+
+    public Optional<Utilisateur> getUtilisateurById(Long id){return utilisateurRepository.findById(id);}
+
+    public List<Utilisateur> getAllUtilisateurs(){return utilisateurRepository.findAll();}
+
+    public boolean deleteUser(Long id){
+        if (!utilisateurRepository.existsById(id)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"l'utilisateur est introvable");
+        }
+
+        utilisateurRepository.deleteById(id);
+        return true;
+    }
+
+    public GrantedAuthority getGrantedAuthority(Role role){
+        return new SimpleGrantedAuthority("ROLE_" + role.getLibelleRole().name());
+    }
+
+
+    public Utilisateur createAdmin(Utilisateur admin , String superAdminEmail){
+        Utilisateur superAdmin = utilisateurRepository.findByAdresseMail(superAdminEmail)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"you must be a superAdmin"));
+
+        if (!getGrantedAuthority(superAdmin.getRole()).getAuthority().equals("ROLE_SUPER_ADMIN")){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"only the Super Admin  user can create admin ");
+        }
+
+        if (utilisateurExiste(admin.getAdresseMail())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"cet email est deja utilise");
+        }
+
+        Role adminRole = roleRepository.findByLibelleRole(EnumRole.ADMIN)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,"le role admin n'existe pas"));
+
+        admin.setRole(adminRole);
+        admin.setMotDePasse(passwordEncoder.encode(admin.getMotDePasse()));
+
+        return utilisateurRepository.save(admin);
+    }
+
+
+    public Utilisateur createUserWithRole(String nom , String prenom , String email , String motDepasse , String roleName , String superAdminEmail){
+        System.out.println("the superAdmin fait le demande : " +superAdminEmail);
+
+        Utilisateur superAdmin = utilisateurRepository.findByAdresseMail(superAdminEmail)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"only the Super can create utilisateur"));
+        System.out.println("Role :" + superAdmin.getRole().getLibelleRole());
+
+
+        if (!superAdmin.getRole().getLibelleRole().equals(EnumRole.SUPER_ADMIN)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"only the super Admin ");
+        }
+
+        if (utilisateurRepository.findByAdresseMail(email).isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"this email est deja utilisé");
+        }
+
+        EnumRole enumRole;
+        try {
+            enumRole = EnumRole.valueOf(roleName.toUpperCase());
+        }catch (IllegalArgumentException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"le role invalide");
+        }
+
+        Role role = roleRepository.findByLibelleRole(enumRole)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,   "Le role " +roleName+ "n'existe pas"));
+
+        //creation de l'utilisateur
+        Utilisateur newUser = new Utilisateur();
+        newUser.setNom(nom);
+        newUser.setPrenom(prenom);
+        newUser.setAdresseMail(email);
+        newUser.setMotDePasse(passwordEncoder.encode(motDepasse));
+        newUser.setRole(role);
+        newUser.setDateCreation(LocalDateTime.now());
+
+        return utilisateurRepository.save(newUser);
+
+    }
+
 
 
 }
