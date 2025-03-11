@@ -30,7 +30,7 @@ public class EmailService {
                     +"Cordialement, \n L'equipe Université Italie.";
 
             SimpleMailMessage email = new SimpleMailMessage();
-            email.setFrom("bougachaahmed98@gmail.com");
+            email.setFrom("Noreply@universiteitalie.com");
             email.setTo(utilisateur.getAdresseMail());
             email.setSubject(sujet);
             email.setText(message);
@@ -50,7 +50,7 @@ public class EmailService {
             }
 
             SimpleMailMessage email = new SimpleMailMessage();
-            email.setFrom("bougachaahmd98@gmail.com");
+            email.setFrom("Noreply@universiteitalie.com");
             email.setTo(client);
             email.setSubject(subject);
             email.setText(message);
