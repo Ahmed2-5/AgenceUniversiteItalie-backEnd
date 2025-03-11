@@ -187,6 +187,22 @@ public class UtilisateurService {
 
     }
 
+    public Optional<Utilisateur> getUtilisateurByEmail(String email){
+        Optional<Utilisateur> user = utilisateurRepository.findByAdresseMail(email);
+        if (user.isPresent()){
+            System.out.println("Utilisateur trouver" + user.get().getAdresseMail());
+        }else {
+            System.out.println("Utilisateur introvable avec cette adresse:"+email);
+        }
+        return user;
+    }
+
+
+    public void updateUtilisateur(Utilisateur utilisateur){
+        utilisateurRepository.save(utilisateur);
+        System.out.println("Date de derniere Connexion mise a jour :" +utilisateur.getDateDerniereConnexion());
+    }
+
 
 
 }
