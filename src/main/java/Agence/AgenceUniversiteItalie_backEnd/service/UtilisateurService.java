@@ -103,7 +103,7 @@ public class UtilisateurService {
         return savedUser;
     }
 
-    private boolean utilisateurExiste(String email) {
+    public boolean utilisateurExiste(String email) {
         return utilisateurRepository.findByAdresseMail(email).isPresent();
     }
 
