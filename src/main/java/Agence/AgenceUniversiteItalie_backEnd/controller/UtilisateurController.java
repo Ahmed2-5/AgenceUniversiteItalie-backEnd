@@ -55,7 +55,7 @@ public class UtilisateurController {
     }
 
 
-    @GetMapping
+    @GetMapping("/alluser")
     public ResponseEntity<List<Utilisateur>> getAllUtilisateurs() {
         return ResponseEntity.ok(utilisateurService.getAllUtilisateurs());
     }
@@ -150,37 +150,5 @@ public class UtilisateurController {
 
         return ResponseEntity.ok("Votre Compte a ete activé avec succés !");
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

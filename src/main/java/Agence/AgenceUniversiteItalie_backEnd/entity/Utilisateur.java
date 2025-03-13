@@ -1,6 +1,7 @@
 package Agence.AgenceUniversiteItalie_backEnd.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -51,6 +54,18 @@ public class Utilisateur {
     @JoinColumn(name = "id_status-compte")
     private StatusCompte statusCompte;
 
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Tache> createdTaches = new HashSet<>();
+
+    @ManyToMany(mappedBy = "assignedAdmins")
+    @JsonIgnore
+    private Set<Tache> assignedTaches = new HashSet<>();
+
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Commentaire> commentaires = new HashSet<>();
 
     // ajout d'un constructeur
     public Utilisateur(String nom, String prenom, String adresseMail, String motDePasse, Role role) {

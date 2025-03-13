@@ -202,7 +202,4 @@ public class UtilisateurService {
         utilisateurRepository.save(utilisateur);
         System.out.println("Date de derniere Connexion mise a jour :" +utilisateur.getDateDerniereConnexion());
     }
-
-
-
 }
