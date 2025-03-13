@@ -20,11 +20,14 @@ public class JwtUtil {
 
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(Utilisateur user){
+    public String generateToken(Utilisateur user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole().getLibelleRole().name());
+        String roleName = (user.getRole() != null) ? user.getRole().getLibelleRole().name() : "SUPER_ADMIN";
+        claims.put("role", roleName);
         return createToken(claims, user.getAdresseMail());
     }
+
+
 
     public String createToken(Map<String, Object> claims, String subject){
         return Jwts.builder()

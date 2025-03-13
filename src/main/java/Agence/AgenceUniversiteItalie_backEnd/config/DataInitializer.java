@@ -38,13 +38,13 @@ public class DataInitializer implements CommandLineRunner {
         Optional<Role> superAdminRoleOpt = roleRepository.findByLibelleRole(EnumRole.SUPER_ADMIN);
         if(superAdminRoleOpt.isPresent()){
             Role superAdminRole = superAdminRoleOpt.get();
-            Optional<Utilisateur> superAdminExist = utilisateurRepository.findByAdresseMail("admin@@universiteitalie.com");
+            Optional<Utilisateur> superAdminExist = utilisateurRepository.findByAdresseMail("bougachaahmed98@gmail.com");
 
-            if(superAdminExist.isPresent()){
+            if(superAdminExist.isEmpty()){
                 Utilisateur superAdmin = new Utilisateur();
                 superAdmin.setNom("super");
                 superAdmin.setPrenom("Admin");
-                superAdmin.setAdresseMail("admin@universiteitalie.com");
+                superAdmin.setAdresseMail("bougachaahmed98@gmail.com");
                 superAdmin.setMotDePasse(passwordEncoder.encode("admin123"));
                 superAdmin.setDateCreation(LocalDateTime.now());
                 superAdmin.setRole(superAdminRole);

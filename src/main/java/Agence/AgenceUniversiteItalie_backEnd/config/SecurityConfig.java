@@ -45,13 +45,13 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2
+                /*.oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("/api/utilisateurs/oauth2/success")
                         .failureUrl("/api/utilisateurs/oauth2/failure")
                         .successHandler(new SimpleUrlAuthenticationSuccessHandler("/api/utilisateurs/oauth2/success"))
                         .failureHandler(new SimpleUrlAuthenticationFailureHandler("/api/utilisateurs/oauth2/failure"))
 
-                )
+                ) */
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

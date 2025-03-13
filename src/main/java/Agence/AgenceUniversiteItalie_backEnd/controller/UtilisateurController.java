@@ -1,21 +1,25 @@
 package Agence.AgenceUniversiteItalie_backEnd.controller;
 
 
+import Agence.AgenceUniversiteItalie_backEnd.entity.StatusCompte;
 import Agence.AgenceUniversiteItalie_backEnd.entity.Utilisateur;
 import Agence.AgenceUniversiteItalie_backEnd.repository.StatusCompteRepository;
 import Agence.AgenceUniversiteItalie_backEnd.security.JwtUtil;
 import Agence.AgenceUniversiteItalie_backEnd.service.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/utilisateurs")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UtilisateurController {
 
 
@@ -92,6 +96,62 @@ public class UtilisateurController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Utilisateur utilisateur) {
+        Optional<Utilisateur> userOpt = utilisateurService.getUtilisateurByEmail(utilisateur.getAdresseMail());
+
+        if(userOpt.isEmpty()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non trouve");
+        }
+
+        Utilisateur user = userOpt.get();
+        if (!passwordEncoder.matches(utilisateur.getMotDePasse(), user.getMotDePasse())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MotDePasse incorrect");
+        }
+
+        //verification si le compte est actif
+        if (user.getStatusCompte().getIdStatusCompte()==2){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("votre compte est desactivé , veillez verifier votre email ");
+        }
+
+        //Dernier Connection
+        user.setDateDerniereConnexion(LocalDateTime.now());
+        utilisateurService.updateUtilisateur(user);
+
+        String token = jwtUtil.generateToken(utilisateur);
+        return ResponseEntity.ok(Map.of("token", token));
+
+    }
+
+
+
+    @GetMapping("/activer-compte")
+    public ResponseEntity<?> activerCompte(@RequestParam String email) {
+
+        Optional<Utilisateur> utilisateurOpt = utilisateurService.getUtilisateurByEmail(email);
+
+        if(utilisateurOpt.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur introvable");
+        }
+
+        Utilisateur utilisateur = utilisateurOpt.get();
+
+        if (utilisateur.getStatusCompte().getIdStatusCompte()==1){
+            return ResponseEntity.ok("Votre compte est deja activé!");
+        }
+
+        StatusCompte statusCompteActif = statusCompteRepository.findById(1L)
+                .orElseThrow(()-> new RuntimeException("StatusCompte ID=1 intovable en base!")  );
+
+        utilisateur.setStatusCompte(statusCompteActif);
+        utilisateurService.updateUtilisateur(utilisateur);
+
+        return ResponseEntity.ok("Votre Compte a ete activé avec succés !");
+    }
+
+
 
 
 
