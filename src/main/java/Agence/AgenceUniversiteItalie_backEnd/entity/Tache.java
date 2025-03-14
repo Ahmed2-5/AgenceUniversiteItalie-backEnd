@@ -38,7 +38,7 @@ public class Tache {
             joinColumns = @JoinColumn(name = "tache_id"),
             inverseJoinColumns = @JoinColumn(name = "admin_id")
     )
-    private Set<Utilisateur> admins = new HashSet<>();
+    private Set<Utilisateur> assignedAdmins = new HashSet<>();
 
 
     public Tache(String titre, String description, Utilisateur createdBy) {
