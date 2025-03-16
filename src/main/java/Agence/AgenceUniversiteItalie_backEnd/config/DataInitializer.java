@@ -2,8 +2,10 @@ package Agence.AgenceUniversiteItalie_backEnd.config;
 
 import Agence.AgenceUniversiteItalie_backEnd.entity.EnumRole;
 import Agence.AgenceUniversiteItalie_backEnd.entity.Role;
+import Agence.AgenceUniversiteItalie_backEnd.entity.StatusCompte;
 import Agence.AgenceUniversiteItalie_backEnd.entity.Utilisateur;
 import Agence.AgenceUniversiteItalie_backEnd.repository.RoleRepository;
+import Agence.AgenceUniversiteItalie_backEnd.repository.StatusCompteRepository;
 import Agence.AgenceUniversiteItalie_backEnd.repository.UtilisateurRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +22,12 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
 
+
     public DataInitializer(UtilisateurRepository utilisateurRepository,RoleRepository roleRepository, PasswordEncoder passwordEncoder){
         this.utilisateurRepository = utilisateurRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+
     }
 
     @Override
@@ -56,4 +60,6 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("le super n'existe pas , impossible de  créer un admin");
         }
     }
+
+
 }

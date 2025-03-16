@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private  final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateToken(Utilisateur user) {
         Map<String, Object> claims = new HashMap<>();
