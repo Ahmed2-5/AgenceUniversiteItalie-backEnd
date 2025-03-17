@@ -102,27 +102,27 @@ public class UtilisateurController {
     public ResponseEntity<?> login(@RequestBody Utilisateur utilisateur) {
         Optional<Utilisateur> userOpt = utilisateurService.getUtilisateurByEmail(utilisateur.getAdresseMail());
 
-        if(userOpt.isEmpty()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non trouve");
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Email ou mot de passe incorrect.");
         }
 
         Utilisateur user = userOpt.get();
+
         if (!passwordEncoder.matches(utilisateur.getMotDePasse(), user.getMotDePasse())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MotDePasse incorrect");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Email ou mot de passe incorrect.");
         }
 
-        //verification si le compte est actif
-        if (user.getStatusCompte().getIdStatusCompte()==2){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("votre compte est desactivé , veillez verifier votre email ");
+        // ✅ Vérifie si le compte est activé
+        if (user.getStatusCompte().getIdStatusCompte() == 2) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("❌ Votre compte est désactivé. Veuillez vérifier votre email pour l'activer.");
         }
 
-        //Dernier Connection
+        // ✅ Mise à jour de la date de dernière connexion
         user.setDateDerniereConnexion(LocalDateTime.now());
         utilisateurService.updateUtilisateur(user);
 
-        String token = jwtUtil.generateToken(utilisateur);
+        String token = jwtUtil.generateToken(user);
         return ResponseEntity.ok(Map.of("token", token));
-
     }
 
 

@@ -47,7 +47,7 @@ public class PasswordResetService {
 
         tokenRepository.save(resetToken);
 
-        String resetLink = "http://localhost:8082/api/password/reset?token" + token;
+        String resetLink = "http://localhost:8082/api/password/reset?token=" + token;
         emailService.sendSimpleEmail(email, "Réintialisation du mot de passe",
                 "cliquer sur le lien pour le reset : " + resetLink);
         System.out.println("Email de reset a été envoyer a : " +email);
