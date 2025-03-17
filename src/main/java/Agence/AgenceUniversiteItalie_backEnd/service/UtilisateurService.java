@@ -88,7 +88,7 @@ public class UtilisateurService {
         utilisateur.setStatusCompte(statusCompte);
 
         //Encode MotDePasse
-        if (!utilisateur.getMotDePasse().startsWith("$2s$")){
+        if (!utilisateur.getMotDePasse().startsWith("$2a$") && !utilisateur.getMotDePasse().startsWith("$2b")){
             utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
         }
 
