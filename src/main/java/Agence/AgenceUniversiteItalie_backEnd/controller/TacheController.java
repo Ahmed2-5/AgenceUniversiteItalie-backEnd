@@ -2,6 +2,7 @@ package Agence.AgenceUniversiteItalie_backEnd.controller;
 
 
 import Agence.AgenceUniversiteItalie_backEnd.entity.Tache;
+import Agence.AgenceUniversiteItalie_backEnd.repository.TacheRepository;
 import Agence.AgenceUniversiteItalie_backEnd.service.TacheServie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import java.util.Set;
 public class TacheController {
 
     private final TacheServie tacheService;
+    private TacheRepository tacheRepository;
 
     public TacheController(TacheServie tacheService) {
         this.tacheService = tacheService;
