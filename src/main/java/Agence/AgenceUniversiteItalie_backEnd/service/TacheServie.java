@@ -8,6 +8,8 @@ import Agence.AgenceUniversiteItalie_backEnd.repository.TacheRepository;
 import Agence.AgenceUniversiteItalie_backEnd.repository.UtilisateurRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,4 +50,15 @@ public class TacheServie {
 
         return tacheRepository.save(tache);
     }
+
+
+     public List<Tache> getAllTaches() {
+        return tacheRepository.findAll();
+     }
+
+     public Optional<Tache> getTacheById(long id) {
+        return tacheRepository.findById(id);
+     }
+
+
 }
