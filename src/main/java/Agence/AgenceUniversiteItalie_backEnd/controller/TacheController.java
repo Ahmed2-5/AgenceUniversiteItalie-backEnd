@@ -43,4 +43,8 @@ public class TacheController {
         Optional<Tache> tache = tacheService.getTacheById(id);
         return tache.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    //to Do get tache by user :
+    //Ajouter un commentaire
+    //et finalement update Tache
 }
