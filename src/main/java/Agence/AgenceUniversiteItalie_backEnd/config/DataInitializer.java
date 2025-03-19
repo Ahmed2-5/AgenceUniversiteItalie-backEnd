@@ -20,13 +20,15 @@ public class DataInitializer implements CommandLineRunner {
     private final UtilisateurRepository utilisateurRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private StatusCompteRepository statusCompteRepository;
 
 
 
-    public DataInitializer(UtilisateurRepository utilisateurRepository,RoleRepository roleRepository, PasswordEncoder passwordEncoder){
+    public DataInitializer(UtilisateurRepository utilisateurRepository,RoleRepository roleRepository, PasswordEncoder passwordEncoder , StatusCompteRepository statusCompteRepository){
         this.utilisateurRepository = utilisateurRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.statusCompteRepository = statusCompteRepository;
 
     }
 
@@ -38,6 +40,9 @@ public class DataInitializer implements CommandLineRunner {
                 return roleRepository.save(newRole);
             });
         }
+
+
+
 
         Optional<Role> superAdminRoleOpt = roleRepository.findByLibelleRole(EnumRole.SUPER_ADMIN);
         if(superAdminRoleOpt.isPresent()){
@@ -52,6 +57,9 @@ public class DataInitializer implements CommandLineRunner {
                 superAdmin.setMotDePasse(passwordEncoder.encode("admin123"));
                 superAdmin.setDateCreation(LocalDateTime.now());
                 superAdmin.setRole(superAdminRole);
+
+
+
 
                 utilisateurRepository.save(superAdmin);
                 System.out.println("Super admin added");
