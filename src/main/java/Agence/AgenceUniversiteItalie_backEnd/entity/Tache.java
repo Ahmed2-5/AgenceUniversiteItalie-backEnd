@@ -19,14 +19,20 @@ public class Tache {
     private Long idTache;
 
     private String titre;
+
+    @Column(length = 1000)
     private String description;
 
 
 
     @Enumerated(EnumType.STRING)
-    private TacheStatus status= TacheStatus.PAS_ENCORE;
+    private EnumStatutTache status= EnumStatutTache.PAS_ENCORE;
 
     private LocalDateTime dateCreation = LocalDateTime.now();
+
+    private LocalDateTime dateModification = LocalDateTime.now();
+
+    private LocalDateTime dateEcheance = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "createdBy", nullable = false)
@@ -39,6 +45,23 @@ public class Tache {
             inverseJoinColumns = @JoinColumn(name = "admin_id")
     )
     private Set<Utilisateur> assignedAdmins = new HashSet<>();
+
+    @OneToMany(mappedBy = "tache" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Utilisateur> commentaires = new HashSet<>();
+
+    @PrePersist
+    protected void onCreate(){
+        this.dateCreation = LocalDateTime.now();
+        this.dateModification = LocalDateTime.now();
+        if (this.status == null){
+            this.status= EnumStatutTache.PAS_ENCORE;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        this.dateModification = LocalDateTime.now();
+    }
 
 
     public Tache(String titre, String description, Utilisateur createdBy) {
